@@ -5,19 +5,18 @@ import dayjs from "dayjs";
 import { ProgressBar } from "../components/ProgressBar";
 import { CheckBox } from "../components/CheckBox";
 
-interface Params {
+interface DParams {
   date: string;
 }
 
 export function Habit() {
   const route = useRoute();
 
-  const { date } = route.params as Params;
+  const { date } = route.params as DParams;
   const parseDate = dayjs(date);
   const dayOfWeek = parseDate.format("dddd");
   const dayAndMonth = parseDate.format("DD/MM");
 
-  console.log(date);
   return (
     <View className="flex-1 bg-background px-8 pt-16">
       <ScrollView

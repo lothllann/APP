@@ -1,7 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, ScrollView } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Text, ScrollView, Alert } from "react-native";
 import { DAY_SIZE, HabitDay } from "../components/HabitDay";
 import { Header } from "../components/Header";
+import { api } from "../lib/axios";
 import { generateRangeDatesFromYearStart } from "../utils/generate-range-between-dates";
 
 const weekDays = ["D", "S", "T", "Q", "Q", "S", "S"];
@@ -11,6 +13,29 @@ const amountOfDaysToFill = minSummaryDatesSize - datesFromYearStart.length;
 
 export function Home() {
   const { navigate } = useNavigation();
+  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState(null);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/summary');
+      setSummary(response.data);
+
+      console.log(response.data);
+    } catch (error) {
+      Alert.alert("Erro");
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   return (
     <View className="flex-1 bg-background px-8 pt-16">
@@ -36,7 +61,12 @@ export function Home() {
       >
         <View className="flex-row flex-wrap">
           {datesFromYearStart.map((date) => {
-            return <HabitDay key={date.toISOString()} onPress={()=> navigate('habit', {date: date.toISOString()})} />;
+            return (
+              <HabitDay
+                key={date.toISOString()}
+                onPress={() => navigate("habit", { date: date.toISOString() })}
+              />
+            );
           })}
 
           {amountOfDaysToFill > 0 &&
